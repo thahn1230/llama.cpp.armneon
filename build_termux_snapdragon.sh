@@ -104,11 +104,19 @@ rm -rf build_termux_snapdragon
 mkdir -p build_termux_snapdragon
 cd build_termux_snapdragon
 
-# Termux용 최적화 플래그
-TERMUX_FLAGS="$ARCH_FLAGS -O3 -ffast-math -DANDROID -D__ANDROID__"
+# Snapdragon 8 Gen 3 최적화 플래그 (finite-math 문제 해결)
+OPTIMIZATION_FLAGS="-march=armv9-a -O3 -fno-finite-math-only -DANDROID -D__ANDROID__"
 
-echo "🔧 Termux 최적화 플래그:"
-echo "  $TERMUX_FLAGS"
+echo "🔧 Termux 최적화 플래그: $OPTIMIZATION_FLAGS"
+echo "  - ARMv9-A 최적화"
+echo "  - O3 고성능 최적화"
+echo "  - finite-math 해제 (NaN/infinity 허용)"
+echo "  - Android 타겟"
+
+# Termux용 최적화 플래그 - 제거하거나 주석 처리
+# TERMUX_FLAGS="$ARCH_FLAGS -ffast-math -DANDROID -D__ANDROID__"
+
+# echo "🔧 Termux 최적화 플래그:"
 
 # CMake 설정 (Termux용)
 echo ""
@@ -130,21 +138,16 @@ fi
 if [ "$BUILD_SYSTEM" = "ninja" ]; then
     echo "  Generator: Ninja"
     cmake .. \
-        -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=clang \
         -DCMAKE_CXX_COMPILER=clang++ \
-        -DGGML_LLAMAFILE=ON \
-        -DGGML_CPU_KLEIDIAI=ON \
-        -DGGML_NATIVE=ON \
         -DGGML_CPU=ON \
-        -DGGML_BACKEND_DL=OFF \
         -DGGML_NEON=ON \
-        -DCMAKE_C_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1" \
-        -DCMAKE_CXX_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1 -std=c++17" \
-        -DCMAKE_FIND_ROOT_PATH="$PREFIX" \
-        -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
-        -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
+        -DGGML_CPU_KLEIDIAI=ON \
+        -DGGML_NATIVE=OFF \
+        -DCMAKE_C_FLAGS="$OPTIMIZATION_FLAGS -DDEBUG_W4A8=1" \
+        -DCMAKE_CXX_FLAGS="$OPTIMIZATION_FLAGS -DDEBUG_W4A8=1 -std=c++17" \
+        -GNinja
     
     # Ninja 설정 실패시 Make로 폴백
     if [ $? -ne 0 ] || [ ! -f "build.ninja" ]; then
@@ -161,17 +164,12 @@ if [ "$BUILD_SYSTEM" = "make" ]; then
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER=clang \
         -DCMAKE_CXX_COMPILER=clang++ \
-        -DGGML_LLAMAFILE=ON \
-        -DGGML_CPU_KLEIDIAI=ON \
-        -DGGML_NATIVE=ON \
         -DGGML_CPU=ON \
-        -DGGML_BACKEND_DL=OFF \
         -DGGML_NEON=ON \
-        -DCMAKE_C_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1" \
-        -DCMAKE_CXX_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1 -std=c++17" \
-        -DCMAKE_FIND_ROOT_PATH="$PREFIX" \
-        -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
-        -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
+        -DGGML_CPU_KLEIDIAI=ON \
+        -DGGML_NATIVE=OFF \
+        -DCMAKE_C_FLAGS="$OPTIMIZATION_FLAGS -DDEBUG_W4A8=1" \
+        -DCMAKE_CXX_FLAGS="$OPTIMIZATION_FLAGS -DDEBUG_W4A8=1 -std=c++17"
 fi
 
 if [ $? -ne 0 ]; then
