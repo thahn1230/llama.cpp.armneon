@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG -shared -Wl,-soname,libmtmd_shared.so -o ../../bin/libmtmd_shared.so CMakeFiles/mtmd.dir/mtmd.cpp.o CMakeFiles/mtmd.dir/mtmd-helper.cpp.o CMakeFiles/mtmd.dir/clip.cpp.o  -Wl,-rpath,/home/thahn1230/llama.cpp/build/bin: ../../bin/libllama.so libmtmd_audio.a ../../bin/libggml.so ../../bin/libggml-cpu.so ../../bin/libggml-base.so 

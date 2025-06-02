@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmtmd_audio.a CMakeFiles/mtmd_audio.dir/mtmd-audio.cpp.o
+/usr/bin/ranlib libmtmd_audio.a
