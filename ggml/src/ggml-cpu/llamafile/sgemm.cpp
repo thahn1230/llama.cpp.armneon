@@ -40,7 +40,7 @@
 // hardware for performance, and then use whatever resources remain for
 // improving numerical accuracy.
 //
-// [1] J. Tunney, ‘LLaMA Now Goes Faster on CPUs’, Mar. 2024. [Online].
+// [1] J. Tunney, 'LLaMA Now Goes Faster on CPUs', Mar. 2024. [Online].
 //     Available: https://justine.lol/matmul/. [Accessed: 29-Mar-2024].
 
 #if defined(__GNUC__)
@@ -3456,40 +3456,75 @@ bool llamafile_sgemm(const struct ggml_compute_params * params, int64_t m, int64
     }
 
     case GGML_TYPE_Q4_0: {
-        if (Btype != GGML_TYPE_Q8_0)
+        // 🔍 DEBUG: Activation 정보 출력
+        printf("=== Q4_0 WEIGHT DEBUG ===\n");
+        printf("A(weight) type: Q4_0, B(activation) type: %d\n", Btype);
+        printf("Matrix dimensions: m=%lld, n=%lld, k=%lld\n", (long long)m, (long long)n, (long long)k);
+        printf("B type check: Btype=%d, GGML_TYPE_Q8_0=%d\n", Btype, GGML_TYPE_Q8_0);
+        
+        if (Btype != GGML_TYPE_Q8_0) {
+            printf("❌ B type is not Q8_0, returning false\n");
             return false;
+        }
+        
+        printf("✅ B type is Q8_0, proceeding with w4a8 GEMM\n");
+        
+        // 🔍 DEBUG: Q8_0 activation 블록 내용 출력 (첫 2개 블록만)
+        const block_q8_0 *b_blocks = (const block_q8_0 *)B;
+        for (int debug_i = 0; debug_i < 2 && debug_i * 32 < k; debug_i++) {
+            printf("Q8_0 block[%d]: scale=%.6f, qs[0-7]=[", debug_i, 
+                   GGML_FP16_TO_FP32(b_blocks[debug_i].d));
+            for (int j = 0; j < 8; j++) {
+                printf("%d%s", (int)b_blocks[debug_i].qs[j], j < 7 ? "," : "");
+            }
+            printf("]\n");
+        }
+        
+        // 🔍 DEBUG: Hardware 지원 확인
 #if defined(__AVX2__) || defined(__AVX512F__) || defined(__AVX__)
+        printf("🚀 Using AVX-based w4a8 kernel\n");
         tinyBLAS_Q0_AVX<block_q4_0, block_q8_0, float> tb{
             k, (const block_q4_0 *)A, lda,
             (const block_q8_0 *)B, ldb,
             (float *)C, ldc,
             params->ith, params->nth};
         tb.matmul(m, n);
+        printf("✅ AVX w4a8 GEMM completed\n");
         return true;
 #elif defined(__ARM_FEATURE_DOTPROD)
+        printf("🚀 Using ARM NEON dotprod w4a8 kernel\n");
         tinyBLAS_Q0_ARM<block_q4_0> tb{
             k, (const block_q4_0 *)A, lda,
             (const block_q8_0 *)B, ldb,
             (float *)C, ldc,
             params->ith, params->nth};
         tb.matmul(m, n);
+        printf("✅ ARM w4a8 GEMM completed\n");
         return true;
 #elif defined(__MMA__)
+        printf("🚀 Using PowerPC MMA w4a8 kernel\n");
     //TO-DO: Remove this condition once gemv forwarding is enabled.
-        if (n < 8 && n != 4)
+        if (n < 8 && n != 4) {
+            printf("❌ n=%lld too small for MMA (need n>=8 or n==4)\n", (long long)n);
            return false;
-        if (m < 8 && m != 4)
+        }
+        if (m < 8 && m != 4) {
+            printf("❌ m=%lld too small for MMA (need m>=8 or m==4)\n", (long long)m);
            return false;
+        }
         tinyBLAS_Q0_PPC<block_q4_0, block_q8_0, float> tb{
             k, (const block_q4_0 *)A, lda,
             (const block_q8_0 *)B, ldb,
             (float *)C, ldc,
             params->ith, params->nth};
         tb.matmul(m, n);
+        printf("✅ MMA w4a8 GEMM completed\n");
         return true;
 #else
+        printf("❌ No hardware acceleration available for w4a8\n");
         return false;
 #endif
+        printf("=========================\n");
     }
 
     case GGML_TYPE_Q5_0: {

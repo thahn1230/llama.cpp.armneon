@@ -1258,8 +1258,22 @@ static void ggml_compute_forward_mul_mat(
         const struct ggml_compute_params * params,
               struct ggml_tensor * dst) {
 
+    // 🔍 SIMPLE TEST: 함수 진입점 확인
+    printf("🚀 ENTERED ggml_compute_forward_mul_mat\n");
+    fflush(stdout);
+
     const struct ggml_tensor * src0 = dst->src[0];
     const struct ggml_tensor * src1 = dst->src[1];
+
+    // 🔍 ALWAYS PRINT: Weight and Activation Types
+    printf("🔍 Weight(src0) type: %d, Activation(src1) type: %d\n", src0->type, src1->type);
+    fflush(stdout);
+    
+    // 🔍 SPECIAL: Q4_0 Detection
+    if (src0->type == GGML_TYPE_Q4_0) {
+        printf("🎯 Q4_0 WEIGHT DETECTED! Activation type: %d\n", src1->type);
+        fflush(stdout);
+    }
 
     GGML_TENSOR_BINARY_OP_LOCALS
 
@@ -1295,8 +1309,21 @@ static void ggml_compute_forward_mul_mat(
     const int64_t r3 = ne13 / ne03;
 
     const bool src1_cont = ggml_is_contiguous(src1);
+    
+    // 🔍 DEBUG: Q4_0 Weight 감지 및 디버그 시작
+    if (src0->type == GGML_TYPE_Q4_0) {
+        printf("\n🔍 === Q4_0 WEIGHT PROCESSING DEBUG ===\n");
+        printf("src0(weight) type: %d (Q4_0)\n", src0->type);
+        printf("src1(activation) type: %d\n", src1->type);
+        printf("dst type: %d\n", dst->type);
+        printf("src1_cont: %s\n", src1_cont ? "true" : "false");
+        printf("Required vec_dot_type for Q4_0: %d (Q8_0)\n", GGML_TYPE_Q8_0);
+    }
 
     if (src1_cont) {
+        if (src0->type == GGML_TYPE_Q4_0) {
+            printf("📝 Trying llamafile_sgemm with original src1 type...\n");
+        }
         for (int64_t i13 = 0; i13 < ne13; i13++)
             for (int64_t i12 = 0; i12 < ne12; i12++)
                 if (!llamafile_sgemm(params,
@@ -1309,8 +1336,15 @@ static void ggml_compute_forward_mul_mat(
                                      nb1/ggml_type_size(dst->type),
                                      src0->type,
                                      src1->type,
-                                     dst->type))
+                                     dst->type)) {
+                    if (src0->type == GGML_TYPE_Q4_0) {
+                        printf("❌ First llamafile_sgemm failed (expected for w4a16), falling back...\n");
+                    }
                     goto UseGgmlGemm1;
+                }
+        if (src0->type == GGML_TYPE_Q4_0) {
+            printf("✅ First llamafile_sgemm succeeded (unexpected!)\n");
+        }
         return;
     }
 UseGgmlGemm1:;
@@ -1326,6 +1360,17 @@ UseGgmlGemm1:;
 
         assert(params->wsize >= ne13*nbw3);
         GGML_ASSERT(src1->type == GGML_TYPE_F32);
+        
+        // 🔍 DEBUG: Quantization 과정 출력
+        if (src0->type == GGML_TYPE_Q4_0) {
+            printf("\n📊 === F32 → Q8_0 QUANTIZATION PROCESS ===\n");
+            printf("Converting src1 from F32 to Q8_0...\n");
+            printf("Original src1 type: %d (F32)\n", src1->type);
+            printf("Target vec_dot_type: %d (Q8_0)\n", vec_dot_type);
+            printf("Memory sizes: nbw0=%zu, nbw1=%zu\n", nbw0, nbw1);
+            printf("Tensor dimensions: ne10=%lld, ne11=%lld, ne12=%lld, ne13=%lld\n", 
+                   (long long)ne10, (long long)ne11, (long long)ne12, (long long)ne13);
+        }
 
     #if 0
         for (int64_t i13 = 0; i13 < ne13; ++i13) {
@@ -1344,11 +1389,42 @@ UseGgmlGemm1:;
                     size_t bs = ggml_blck_size(vec_dot_type);
                     int64_t ne10_block_start = (ith * ne10/bs) / nth;
                     int64_t ne10_block_end   = ((ith + 1) * ne10/bs) / nth;
+                    
+                    // 🔍 DEBUG: 첫 번째 블록만 상세 출력
+                    if (src0->type == GGML_TYPE_Q4_0 && i13 == 0 && i12 == 0 && i11 == 0 && ith == 0) {
+                        printf("🔍 Quantizing block [%lld,%lld,%lld] range [%lld-%lld]\n", 
+                               (long long)i13, (long long)i12, (long long)i11, 
+                               (long long)ne10_block_start, (long long)ne10_block_end);
+                        
+                        // 원본 F32 값들 출력 (처음 8개만)
+                        float *src_ptr = (float *)((char *) src1->data + i13*nb13 + i12*nb12 + i11*nb11 + ne10_block_start*bs*nb10);
+                        printf("Original F32 values[0-7]: [");
+                        for (int debug_j = 0; debug_j < 8 && debug_j < (ne10_block_end - ne10_block_start) * bs; debug_j++) {
+                            printf("%.3f%s", src_ptr[debug_j], debug_j < 7 ? "," : "");
+                        }
+                        printf("]\n");
+                    }
+                    
                     from_float((float *)((char *) src1->data + i13*nb13 + i12*nb12 + i11*nb11 + ne10_block_start*bs*nb10),
                                (void *)               (wdata + i13*nbw3 + i12*nbw2 + i11*nbw1 + ne10_block_start*nbw0),
                                (ne10_block_end - ne10_block_start) * bs);
+                    
+                    // 🔍 DEBUG: 변환된 Q8_0 값들 출력
+                    if (src0->type == GGML_TYPE_Q4_0 && i13 == 0 && i12 == 0 && i11 == 0 && ith == 0) {
+                        block_q8_0 *q8_ptr = (block_q8_0 *)(wdata + i13*nbw3 + i12*nbw2 + i11*nbw1 + ne10_block_start*nbw0);
+                        printf("Converted Q8_0 block: scale=%.6f, qs[0-7]=[", GGML_FP16_TO_FP32(q8_ptr->d));
+                        for (int debug_j = 0; debug_j < 8; debug_j++) {
+                            printf("%d%s", (int)q8_ptr->qs[debug_j], debug_j < 7 ? "," : "");
+                        }
+                        printf("]\n");
+                    }
                 }
             }
+        }
+        
+        if (src0->type == GGML_TYPE_Q4_0) {
+            printf("✅ F32 → Q8_0 quantization completed\n");
+            printf("=====================================\n");
         }
     #endif
     }

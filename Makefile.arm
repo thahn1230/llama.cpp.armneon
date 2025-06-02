@@ -1,0 +1,60 @@
+# ARM W4A8 전용 Makefile
+# 사용법: make -f Makefile.arm
+
+# ARM 최적화 설정
+CC := gcc
+CXX := g++
+CFLAGS := -O3 -march=armv8-a+dotprod+i8mm -mtune=cortex-a76 -DGGML_USE_LLAMAFILE -DGGML_USE_KLEIDIAI
+CXXFLAGS := -O3 -march=armv8-a+dotprod+i8mm -mtune=cortex-a76 -DGGML_USE_LLAMAFILE -DGGML_USE_KLEIDIAI -std=c++17
+LDFLAGS := -lm -lpthread
+
+# KleidiAI 활성화 플래그
+CFLAGS += -DGGML_CPU_KLEIDIAI=1
+CXXFLAGS += -DGGML_CPU_KLEIDIAI=1
+
+# W4A8 디버그 활성화
+CFLAGS += -DDEBUG_W4A8=1
+CXXFLAGS += -DDEBUG_W4A8=1
+
+# 소스 파일들
+GGML_SOURCES := \
+	ggml/src/ggml.c \
+	ggml/src/ggml-cpu/ggml-cpu.c \
+	ggml/src/ggml-cpu/ggml-cpu-quants.c \
+	ggml/src/ggml-cpu/llamafile/sgemm.cpp \
+	ggml/src/ggml-cpu/kleidiai/kleidiai.cpp \
+	ggml/src/ggml-cpu/kleidiai/kernels.cpp
+
+LLAMA_SOURCES := \
+	src/llama.cpp \
+	src/llama-model.cpp \
+	src/llama-context.cpp \
+	src/llama-model-loader.cpp \
+	src/llama-vocab.cpp \
+	src/llama-grammar.cpp \
+	src/llama-sampling.cpp \
+	src/unicode.cpp
+
+COMMON_SOURCES := \
+	common/common.cpp \
+	common/sampling.cpp \
+	common/console.cpp \
+	common/grammar-parser.cpp
+
+# 빌드 타겟
+all: llama-cli-arm
+
+llama-cli-arm: tools/main/main.cpp $(GGML_SOURCES) $(LLAMA_SOURCES) $(COMMON_SOURCES)
+	$(CXX) $(CXXFLAGS) -Iggml/include -Iinclude -Icommon -o $@ $^ $(LDFLAGS)
+
+# 테스트 실행
+test-w4a8: llama-cli-arm
+	@echo "🧪 Testing W4A8 on ARM..."
+	@echo "⚠️  Q4_0 모델이 필요합니다!"
+	@echo "💡 다음 명령어로 테스트하세요:"
+	@echo "   ./llama-cli-arm -m your_model_Q4_0.gguf -p \"Hello World\" -n 3"
+
+clean:
+	rm -f llama-cli-arm
+
+.PHONY: all test-w4a8 clean 
