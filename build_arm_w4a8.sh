@@ -12,6 +12,7 @@ cd build_arm
 cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DGGML_LLAMAFILE=ON \
+    -DLLAMA_NATIVE=ON \
     -DGGML_CPU_KLEIDIAI=ON \
     -DGGML_NATIVE=ON \
     -DGGML_CPU=ON \
