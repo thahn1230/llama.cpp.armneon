@@ -113,21 +113,66 @@ echo "  $TERMUX_FLAGS"
 # CMake 설정 (Termux용)
 echo ""
 echo "⚙️  CMake 설정 중..."
-cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_CXX_COMPILER=clang++ \
-    -DGGML_LLAMAFILE=ON \
-    -DGGML_CPU_KLEIDIAI=ON \
-    -DGGML_NATIVE=ON \
-    -DGGML_CPU=ON \
-    -DGGML_BACKEND_DL=OFF \
-    -DGGML_NEON=ON \
-    -DCMAKE_C_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1" \
-    -DCMAKE_CXX_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1 -std=c++17" \
-    -DCMAKE_FIND_ROOT_PATH="$PREFIX" \
-    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
-    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
+
+# 빌드 시스템 선택
+BUILD_SYSTEM="make"  # 안정성을 위해 기본값은 make
+CMAKE_GENERATOR=""
+
+if command -v ninja >/dev/null 2>&1; then
+    echo "  🔧 Ninja 사용 가능, 시도해봅니다..."
+    BUILD_SYSTEM="ninja"
+    CMAKE_GENERATOR="-G Ninja"
+else
+    echo "  🔧 Make 사용"
+fi
+
+# CMake 실행 (Ninja 우선 시도, 실패시 Make로 폴백)
+if [ "$BUILD_SYSTEM" = "ninja" ]; then
+    echo "  Generator: Ninja"
+    cmake .. \
+        -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
+        -DGGML_LLAMAFILE=ON \
+        -DGGML_CPU_KLEIDIAI=ON \
+        -DGGML_NATIVE=ON \
+        -DGGML_CPU=ON \
+        -DGGML_BACKEND_DL=OFF \
+        -DGGML_NEON=ON \
+        -DCMAKE_C_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1" \
+        -DCMAKE_CXX_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1 -std=c++17" \
+        -DCMAKE_FIND_ROOT_PATH="$PREFIX" \
+        -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+        -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
+    
+    # Ninja 설정 실패시 Make로 폴백
+    if [ $? -ne 0 ] || [ ! -f "build.ninja" ]; then
+        echo "  ⚠️  Ninja 설정 실패, Make로 폴백..."
+        BUILD_SYSTEM="make"
+        rm -f build.ninja CMakeCache.txt
+    fi
+fi
+
+# Make로 설정 (폴백 또는 기본)
+if [ "$BUILD_SYSTEM" = "make" ]; then
+    echo "  Generator: Unix Makefiles"
+    cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
+        -DGGML_LLAMAFILE=ON \
+        -DGGML_CPU_KLEIDIAI=ON \
+        -DGGML_NATIVE=ON \
+        -DGGML_CPU=ON \
+        -DGGML_BACKEND_DL=OFF \
+        -DGGML_NEON=ON \
+        -DCMAKE_C_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1" \
+        -DCMAKE_CXX_FLAGS="$TERMUX_FLAGS -DDEBUG_W4A8=1 -std=c++17" \
+        -DCMAKE_FIND_ROOT_PATH="$PREFIX" \
+        -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+        -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
+fi
 
 if [ $? -ne 0 ]; then
     echo "❌ CMake 설정 실패!"
@@ -143,23 +188,44 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "✅ CMake 설정 완료"
+echo "✅ CMake 설정 완료 (빌드 시스템: $BUILD_SYSTEM)"
 
 # 빌드 실행
 echo ""
 echo "🔨 컴파일 중..."
 echo "  사용 코어: $(nproc)"
+echo "  빌드 시스템: $BUILD_SYSTEM"
 echo "  예상 시간: 5-15분 (디바이스 성능에 따라)"
 
-# Ninja 빌드 (더 빠름)
-if command -v ninja >/dev/null 2>&1; then
-    echo "  빌드 도구: Ninja"
-    ninja -j$(nproc)
+# 병렬 작업 수 제한 (모바일 환경 고려)
+PARALLEL_JOBS=$(nproc)
+if [ $PARALLEL_JOBS -gt 4 ]; then
+    PARALLEL_JOBS=4
+fi
+echo "  병렬 작업: $PARALLEL_JOBS"
+
+# 빌드 시스템에 따라 실행
+if [ "$BUILD_SYSTEM" = "ninja" ] && [ -f "build.ninja" ]; then
+    echo "  🔧 Ninja 빌드 실행"
+    ninja -j$PARALLEL_JOBS
     BUILD_SUCCESS=$?
 else
-    echo "  빌드 도구: Make"
-    make -j$(nproc)
+    echo "  🔧 Make 빌드 실행" 
+    make -j$PARALLEL_JOBS
     BUILD_SUCCESS=$?
+fi
+
+# 병렬 빌드 실패시 단일 코어로 재시도
+if [ $BUILD_SUCCESS -ne 0 ]; then
+    echo "⚠️  병렬 빌드 실패, 단일 코어로 재시도..."
+    
+    if [ "$BUILD_SYSTEM" = "ninja" ] && [ -f "build.ninja" ]; then
+        ninja -j1
+        BUILD_SUCCESS=$?
+    else
+        make -j1
+        BUILD_SUCCESS=$?
+    fi
 fi
 
 # 결과 확인
