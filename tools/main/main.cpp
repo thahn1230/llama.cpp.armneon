@@ -5,6 +5,7 @@
 #include "sampling.h"
 #include "llama.h"
 #include "chat.h"
+#include "ggml-cpu.h"
 
 #include <cstdio>
 #include <cstring>
@@ -965,6 +966,9 @@ int main(int argc, char ** argv) {
 
     LOG("\n\n");
     common_perf_print(ctx, smpl);
+
+    // Print detailed CPU performance breakdown
+    ggml_perf_print_stats();
 
     common_sampler_free(smpl);
 

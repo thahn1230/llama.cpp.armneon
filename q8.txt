@@ -1,0 +1,1776 @@
+magic                                   =  0x46554747
+version                                 =  3
+tensor_count                            =  290
+metadata_kv_count                       =  32
+general.architecture                    =  llama
+general.type                            =  model
+general.name                            =  Llama 2 7b Hf
+general.organization                    =  Meta Llama
+general.finetune                        =  hf
+general.basename                        =  llama-2
+general.size_label                      =  7B
+llama.block_count                       =  32
+llama.context_length                    =  4096
+llama.embedding_length                  =  4096
+llama.feed_forward_length               =  11008
+llama.attention.head_count              =  32
+llama.attention.head_count_kv           =  32
+llama.rope.freq_base                    =  10000.0
+llama.attention.layer_norm_rms_epsilon  =  9.999999747378752e-06
+llama.attention.key_length              =  128
+llama.attention.value_length            =  128
+general.file_type                       =  7
+llama.vocab_size                        =  32000
+llama.rope.dimension_count              =  128
+general.quantization_version            =  2
+tokenizer.ggml.model                    =  llama
+tokenizer.ggml.pre                      =  default
+tokenizer.ggml.tokens                   =  ['<unk>', '<s>', '</s>', '<0x00>', '<0x01>', '<...
+tokenizer.ggml.scores                   =  [-1000.0, -1000.0, -1000.0, 0.0, 0.0, 0.0, 0.0,...
+tokenizer.ggml.token_type               =  [3, 3, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6...
+tokenizer.ggml.bos_token_id             =  1
+tokenizer.ggml.eos_token_id             =  2
+tokenizer.ggml.unknown_token_id         =  0
+tokenizer.ggml.add_bos_token            =  True
+tokenizer.ggml.add_eos_token            =  False
+tokenizer.ggml.add_space_prefix         =  False
+name          =  token_embd.weight
+n_dimensions  =  2
+shape         =  [4096, 32000]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  0
+==================================================
+name          =  blk.0.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  139264000
+==================================================
+name          =  blk.0.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  139280384
+==================================================
+name          =  blk.0.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  187187200
+==================================================
+name          =  blk.0.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  235094016
+==================================================
+name          =  blk.0.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  283000832
+==================================================
+name          =  blk.0.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  283017216
+==================================================
+name          =  blk.0.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  300843008
+==================================================
+name          =  blk.0.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  318668800
+==================================================
+name          =  blk.0.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  336494592
+==================================================
+name          =  blk.1.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  354320384
+==================================================
+name          =  blk.1.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  354336768
+==================================================
+name          =  blk.1.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  402243584
+==================================================
+name          =  blk.1.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  450150400
+==================================================
+name          =  blk.1.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  498057216
+==================================================
+name          =  blk.1.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  498073600
+==================================================
+name          =  blk.1.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  515899392
+==================================================
+name          =  blk.1.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  533725184
+==================================================
+name          =  blk.1.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  551550976
+==================================================
+name          =  blk.2.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  569376768
+==================================================
+name          =  blk.2.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  569393152
+==================================================
+name          =  blk.2.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  617299968
+==================================================
+name          =  blk.2.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  665206784
+==================================================
+name          =  blk.2.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  713113600
+==================================================
+name          =  blk.2.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  713129984
+==================================================
+name          =  blk.2.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  730955776
+==================================================
+name          =  blk.2.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  748781568
+==================================================
+name          =  blk.2.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  766607360
+==================================================
+name          =  blk.3.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  784433152
+==================================================
+name          =  blk.3.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  784449536
+==================================================
+name          =  blk.3.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  832356352
+==================================================
+name          =  blk.3.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  880263168
+==================================================
+name          =  blk.3.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  928169984
+==================================================
+name          =  blk.3.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  928186368
+==================================================
+name          =  blk.3.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  946012160
+==================================================
+name          =  blk.3.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  963837952
+==================================================
+name          =  blk.3.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  981663744
+==================================================
+name          =  blk.4.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  999489536
+==================================================
+name          =  blk.4.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  999505920
+==================================================
+name          =  blk.4.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1047412736
+==================================================
+name          =  blk.4.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1095319552
+==================================================
+name          =  blk.4.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1143226368
+==================================================
+name          =  blk.4.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1143242752
+==================================================
+name          =  blk.4.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1161068544
+==================================================
+name          =  blk.4.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1178894336
+==================================================
+name          =  blk.4.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1196720128
+==================================================
+name          =  blk.5.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1214545920
+==================================================
+name          =  blk.5.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1232371712
+==================================================
+name          =  blk.5.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1250197504
+==================================================
+name          =  blk.5.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1268023296
+==================================================
+name          =  blk.10.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1285849088
+==================================================
+name          =  blk.10.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1285865472
+==================================================
+name          =  blk.10.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1333772288
+==================================================
+name          =  blk.10.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1381679104
+==================================================
+name          =  blk.10.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1429585920
+==================================================
+name          =  blk.10.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1429602304
+==================================================
+name          =  blk.10.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1447428096
+==================================================
+name          =  blk.10.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1465253888
+==================================================
+name          =  blk.10.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1483079680
+==================================================
+name          =  blk.11.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1500905472
+==================================================
+name          =  blk.11.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1518731264
+==================================================
+name          =  blk.11.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1536557056
+==================================================
+name          =  blk.11.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1554382848
+==================================================
+name          =  blk.5.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1572208640
+==================================================
+name          =  blk.5.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1572225024
+==================================================
+name          =  blk.5.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1620131840
+==================================================
+name          =  blk.5.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1668038656
+==================================================
+name          =  blk.5.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1715945472
+==================================================
+name          =  blk.6.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1715961856
+==================================================
+name          =  blk.6.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1715978240
+==================================================
+name          =  blk.6.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1763885056
+==================================================
+name          =  blk.6.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1811791872
+==================================================
+name          =  blk.6.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1859698688
+==================================================
+name          =  blk.6.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1859715072
+==================================================
+name          =  blk.6.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1877540864
+==================================================
+name          =  blk.6.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1895366656
+==================================================
+name          =  blk.6.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1913192448
+==================================================
+name          =  blk.7.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  1931018240
+==================================================
+name          =  blk.7.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1931034624
+==================================================
+name          =  blk.7.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  1978941440
+==================================================
+name          =  blk.7.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2026848256
+==================================================
+name          =  blk.7.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2074755072
+==================================================
+name          =  blk.7.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2074771456
+==================================================
+name          =  blk.7.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2092597248
+==================================================
+name          =  blk.7.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2110423040
+==================================================
+name          =  blk.7.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2128248832
+==================================================
+name          =  blk.8.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2146074624
+==================================================
+name          =  blk.8.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2146091008
+==================================================
+name          =  blk.8.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2193997824
+==================================================
+name          =  blk.8.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2241904640
+==================================================
+name          =  blk.8.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2289811456
+==================================================
+name          =  blk.8.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2289827840
+==================================================
+name          =  blk.8.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2307653632
+==================================================
+name          =  blk.8.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2325479424
+==================================================
+name          =  blk.8.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2343305216
+==================================================
+name          =  blk.9.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2361131008
+==================================================
+name          =  blk.9.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2361147392
+==================================================
+name          =  blk.9.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2409054208
+==================================================
+name          =  blk.9.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2456961024
+==================================================
+name          =  blk.9.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2504867840
+==================================================
+name          =  blk.9.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2504884224
+==================================================
+name          =  blk.9.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2522710016
+==================================================
+name          =  blk.9.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2540535808
+==================================================
+name          =  blk.9.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2558361600
+==================================================
+name          =  blk.11.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2576187392
+==================================================
+name          =  blk.11.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2576203776
+==================================================
+name          =  blk.11.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2624110592
+==================================================
+name          =  blk.11.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2672017408
+==================================================
+name          =  blk.11.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2719924224
+==================================================
+name          =  blk.12.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2719940608
+==================================================
+name          =  blk.12.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2719956992
+==================================================
+name          =  blk.12.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2767863808
+==================================================
+name          =  blk.12.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2815770624
+==================================================
+name          =  blk.12.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2863677440
+==================================================
+name          =  blk.12.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2863693824
+==================================================
+name          =  blk.12.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2881519616
+==================================================
+name          =  blk.12.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2899345408
+==================================================
+name          =  blk.12.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2917171200
+==================================================
+name          =  blk.13.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  2934996992
+==================================================
+name          =  blk.13.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2935013376
+==================================================
+name          =  blk.13.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  2982920192
+==================================================
+name          =  blk.13.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3030827008
+==================================================
+name          =  blk.13.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3078733824
+==================================================
+name          =  blk.13.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3078750208
+==================================================
+name          =  blk.13.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3096576000
+==================================================
+name          =  blk.13.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3114401792
+==================================================
+name          =  blk.13.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3132227584
+==================================================
+name          =  blk.14.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3150053376
+==================================================
+name          =  blk.14.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3150069760
+==================================================
+name          =  blk.14.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3197976576
+==================================================
+name          =  blk.14.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3245883392
+==================================================
+name          =  blk.14.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3293790208
+==================================================
+name          =  blk.14.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3293806592
+==================================================
+name          =  blk.14.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3311632384
+==================================================
+name          =  blk.14.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3329458176
+==================================================
+name          =  blk.14.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3347283968
+==================================================
+name          =  blk.15.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3365109760
+==================================================
+name          =  blk.15.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3365126144
+==================================================
+name          =  blk.15.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3413032960
+==================================================
+name          =  blk.15.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3460939776
+==================================================
+name          =  blk.15.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3508846592
+==================================================
+name          =  blk.15.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3508862976
+==================================================
+name          =  blk.15.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3526688768
+==================================================
+name          =  blk.15.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3544514560
+==================================================
+name          =  blk.15.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3562340352
+==================================================
+name          =  blk.16.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3580166144
+==================================================
+name          =  blk.16.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3580182528
+==================================================
+name          =  blk.16.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3628089344
+==================================================
+name          =  blk.16.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3675996160
+==================================================
+name          =  blk.16.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3723902976
+==================================================
+name          =  blk.16.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3723919360
+==================================================
+name          =  blk.16.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3741745152
+==================================================
+name          =  blk.16.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3759570944
+==================================================
+name          =  blk.16.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3777396736
+==================================================
+name          =  blk.17.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3795222528
+==================================================
+name          =  blk.17.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3813048320
+==================================================
+name          =  blk.17.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3830874112
+==================================================
+name          =  blk.17.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3848699904
+==================================================
+name          =  blk.17.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  3866525696
+==================================================
+name          =  blk.17.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3866542080
+==================================================
+name          =  blk.17.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3914448896
+==================================================
+name          =  blk.17.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  3962355712
+==================================================
+name          =  blk.17.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4010262528
+==================================================
+name          =  blk.18.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4010278912
+==================================================
+name          =  blk.18.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4010295296
+==================================================
+name          =  blk.18.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4058202112
+==================================================
+name          =  blk.18.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4106108928
+==================================================
+name          =  blk.18.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4154015744
+==================================================
+name          =  blk.18.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4154032128
+==================================================
+name          =  blk.18.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4171857920
+==================================================
+name          =  blk.18.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4189683712
+==================================================
+name          =  blk.18.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4207509504
+==================================================
+name          =  blk.19.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4225335296
+==================================================
+name          =  blk.19.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4225351680
+==================================================
+name          =  blk.19.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4273258496
+==================================================
+name          =  blk.19.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4321165312
+==================================================
+name          =  blk.19.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4369072128
+==================================================
+name          =  blk.19.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4369088512
+==================================================
+name          =  blk.19.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4386914304
+==================================================
+name          =  blk.19.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4404740096
+==================================================
+name          =  blk.19.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4422565888
+==================================================
+name          =  blk.20.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4440391680
+==================================================
+name          =  blk.20.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4440408064
+==================================================
+name          =  blk.20.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4488314880
+==================================================
+name          =  blk.20.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4536221696
+==================================================
+name          =  blk.20.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4584128512
+==================================================
+name          =  blk.20.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4584144896
+==================================================
+name          =  blk.20.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4601970688
+==================================================
+name          =  blk.20.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4619796480
+==================================================
+name          =  blk.20.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4637622272
+==================================================
+name          =  blk.21.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4655448064
+==================================================
+name          =  blk.21.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4655464448
+==================================================
+name          =  blk.21.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4703371264
+==================================================
+name          =  blk.21.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4751278080
+==================================================
+name          =  blk.21.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4799184896
+==================================================
+name          =  blk.21.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4799201280
+==================================================
+name          =  blk.21.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4817027072
+==================================================
+name          =  blk.21.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4834852864
+==================================================
+name          =  blk.21.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4852678656
+==================================================
+name          =  blk.22.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  4870504448
+==================================================
+name          =  blk.22.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4870520832
+==================================================
+name          =  blk.22.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4918427648
+==================================================
+name          =  blk.22.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  4966334464
+==================================================
+name          =  blk.22.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5014241280
+==================================================
+name          =  blk.22.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5014257664
+==================================================
+name          =  blk.22.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5032083456
+==================================================
+name          =  blk.22.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5049909248
+==================================================
+name          =  blk.22.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5067735040
+==================================================
+name          =  blk.23.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5085560832
+==================================================
+name          =  blk.23.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5103386624
+==================================================
+name          =  blk.23.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5121212416
+==================================================
+name          =  blk.23.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5139038208
+==================================================
+name          =  blk.23.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5156864000
+==================================================
+name          =  blk.23.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5156880384
+==================================================
+name          =  blk.23.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5204787200
+==================================================
+name          =  blk.23.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5252694016
+==================================================
+name          =  blk.23.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5300600832
+==================================================
+name          =  blk.24.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5300617216
+==================================================
+name          =  blk.24.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5300633600
+==================================================
+name          =  blk.24.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5348540416
+==================================================
+name          =  blk.24.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5396447232
+==================================================
+name          =  blk.24.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5444354048
+==================================================
+name          =  blk.24.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5444370432
+==================================================
+name          =  blk.24.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5462196224
+==================================================
+name          =  blk.24.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5480022016
+==================================================
+name          =  blk.24.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5497847808
+==================================================
+name          =  blk.25.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5515673600
+==================================================
+name          =  blk.25.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5515689984
+==================================================
+name          =  blk.25.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5563596800
+==================================================
+name          =  blk.25.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5611503616
+==================================================
+name          =  blk.25.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5659410432
+==================================================
+name          =  blk.25.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5659426816
+==================================================
+name          =  blk.25.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5677252608
+==================================================
+name          =  blk.25.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5695078400
+==================================================
+name          =  blk.25.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5712904192
+==================================================
+name          =  blk.26.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5730729984
+==================================================
+name          =  blk.26.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5730746368
+==================================================
+name          =  blk.26.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5778653184
+==================================================
+name          =  blk.26.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5826560000
+==================================================
+name          =  blk.26.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5874466816
+==================================================
+name          =  blk.26.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5874483200
+==================================================
+name          =  blk.26.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5892308992
+==================================================
+name          =  blk.26.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5910134784
+==================================================
+name          =  blk.26.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5927960576
+==================================================
+name          =  blk.27.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  5945786368
+==================================================
+name          =  blk.27.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5945802752
+==================================================
+name          =  blk.27.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  5993709568
+==================================================
+name          =  blk.27.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6041616384
+==================================================
+name          =  blk.27.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6089523200
+==================================================
+name          =  blk.27.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6089539584
+==================================================
+name          =  blk.27.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6107365376
+==================================================
+name          =  blk.27.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6125191168
+==================================================
+name          =  blk.27.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6143016960
+==================================================
+name          =  blk.28.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6160842752
+==================================================
+name          =  blk.28.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6160859136
+==================================================
+name          =  blk.28.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6208765952
+==================================================
+name          =  blk.28.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6256672768
+==================================================
+name          =  blk.28.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6304579584
+==================================================
+name          =  blk.28.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6304595968
+==================================================
+name          =  blk.28.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6322421760
+==================================================
+name          =  blk.28.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6340247552
+==================================================
+name          =  blk.28.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6358073344
+==================================================
+name          =  blk.29.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6375899136
+==================================================
+name          =  blk.29.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6393724928
+==================================================
+name          =  blk.29.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6411550720
+==================================================
+name          =  blk.29.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6429376512
+==================================================
+name          =  blk.29.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6447202304
+==================================================
+name          =  blk.29.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6447218688
+==================================================
+name          =  blk.29.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6495125504
+==================================================
+name          =  blk.29.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6543032320
+==================================================
+name          =  blk.29.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6590939136
+==================================================
+name          =  blk.30.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6590955520
+==================================================
+name          =  blk.30.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6590971904
+==================================================
+name          =  blk.30.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6638878720
+==================================================
+name          =  blk.30.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6686785536
+==================================================
+name          =  blk.30.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6734692352
+==================================================
+name          =  blk.30.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6734708736
+==================================================
+name          =  blk.30.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6752534528
+==================================================
+name          =  blk.30.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6770360320
+==================================================
+name          =  blk.30.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6788186112
+==================================================
+name          =  blk.31.attn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6806011904
+==================================================
+name          =  blk.31.ffn_down.weight
+n_dimensions  =  2
+shape         =  [11008, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6806028288
+==================================================
+name          =  blk.31.ffn_gate.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6853935104
+==================================================
+name          =  blk.31.ffn_up.weight
+n_dimensions  =  2
+shape         =  [4096, 11008]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6901841920
+==================================================
+name          =  blk.31.ffn_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  6949748736
+==================================================
+name          =  blk.31.attn_k.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6949765120
+==================================================
+name          =  blk.31.attn_output.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6967590912
+==================================================
+name          =  blk.31.attn_q.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  6985416704
+==================================================
+name          =  blk.31.attn_v.weight
+n_dimensions  =  2
+shape         =  [4096, 4096]
+ggml_type     =  GGML_TYPE_Q8_1
+offset        =  7003242496
+==================================================
+name          =  output_norm.weight
+n_dimensions  =  1
+shape         =  [4096]
+ggml_type     =  GGML_TYPE_FP32
+offset        =  7021068288
+==================================================

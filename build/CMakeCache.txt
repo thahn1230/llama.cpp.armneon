@@ -290,26 +290,6 @@ CURL_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libcurl.so
 //Maximum time allowed before CTest will kill the test.
 DART_TESTING_TIMEOUT:STRING=1500
 
-//Directory under which to collect all populated content
-FETCHCONTENT_BASE_DIR:PATH=/home/thahn1230/llama.cpp/build/_deps
-
-//Disables all attempts to download or update content and assumes
-// source dirs already exist
-FETCHCONTENT_FULLY_DISCONNECTED:BOOL=OFF
-
-//Enables QUIET option for all content population
-FETCHCONTENT_QUIET:BOOL=ON
-
-//When not empty, overrides where to find pre-populated content
-// for KleidiAI_Download
-FETCHCONTENT_SOURCE_DIR_KLEIDIAI_DOWNLOAD:PATH=
-
-//Enables UPDATE_DISCONNECTED behavior for all content population
-FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
-
-//Enables UPDATE_DISCONNECTED behavior just for population of KleidiAI_Download
-FETCHCONTENT_UPDATES_DISCONNECTED_KLEIDIAI_DOWNLOAD:BOOL=OFF
-
 //ggml: enable Accelerate framework
 GGML_ACCELERATE:BOOL=ON
 
@@ -329,7 +309,7 @@ GGML_AMX_TILE:BOOL=OFF
 GGML_AVX:BOOL=OFF
 
 //ggml: enable AVX2
-GGML_AVX2:BOOL=ON
+GGML_AVX2:BOOL=OFF
 
 //ggml: enable AVX512F
 GGML_AVX512:BOOL=OFF
@@ -428,10 +408,10 @@ GGML_CUDA_NO_VMM:BOOL=OFF
 GGML_CUDA_PEER_MAX_BATCH_SIZE:STRING=128
 
 //ggml: enable F16C
-GGML_F16C:BOOL=ON
+GGML_F16C:BOOL=OFF
 
 //ggml: enable FMA
-GGML_FMA:BOOL=ON
+GGML_FMA:BOOL=OFF
 
 //ggml: enable gprof
 GGML_GPROF:BOOL=OFF

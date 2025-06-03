@@ -429,6 +429,22 @@ typedef pthread_mutex_t    ggml_mutex_t;
 #endif
 
 // Threadpool def
+
+// Performance timing statistics
+struct ggml_perf_stats {
+    double dequant_time_us;
+    double gemm_time_us;
+    double attention_time_us;
+    double norm_time_us;
+    double activation_time_us;
+    double other_time_us;
+    int64_t dequant_ops;
+    int64_t gemm_ops;
+    int64_t attention_ops;
+    int64_t norm_ops;
+    int64_t activation_ops;
+};
+
 struct ggml_threadpool {
     ggml_mutex_t mutex;       // mutex for cond.var
     ggml_cond_t  cond;        // cond.var for waiting for new work
@@ -455,6 +471,9 @@ struct ggml_threadpool {
     uint32_t     poll;        // Polling level (0 - no polling)
 
     enum ggml_status ec;
+    
+    // Performance statistics
+    struct ggml_perf_stats perf_stats;
 };
 
 // Per-thread state
@@ -516,6 +535,40 @@ struct ggml_state {
 };
 
 static struct ggml_state g_state = {0};
+
+// Global performance statistics
+static struct ggml_perf_stats g_perf_stats = {0};
+
+// Helper functions for performance timing
+static int64_t ggml_perf_time_us(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (int64_t)ts.tv_sec * 1000000 + (int64_t)ts.tv_nsec / 1000;
+}
+
+static void ggml_perf_add_time(double* total_time, int64_t start_time) {
+    int64_t end_time = ggml_perf_time_us();
+    *total_time += (double)(end_time - start_time);
+}
+
+// Function to classify operation types based on tensor op
+static int ggml_classify_operation(const struct ggml_tensor * tensor) {
+    switch (tensor->op) {
+        case GGML_OP_MUL_MAT:
+            if (tensor->src[0] && (tensor->src[0]->type == GGML_TYPE_Q4_0 || tensor->src[0]->type == GGML_TYPE_Q8_0 || 
+                                   tensor->src[0]->type == GGML_TYPE_Q5_0 || tensor->src[0]->type == GGML_TYPE_Q6_K)) {
+                return 1; // Matrix multiplication with quantized weights
+            }
+            return 2; // Regular matrix multiplication
+        case GGML_OP_RMS_NORM:
+        case GGML_OP_NORM:
+            return 3; // Normalization
+        case GGML_OP_SOFT_MAX:
+            return 5; // Attention operations
+        default:
+            return 0; // Other operations
+    }
+}
 
 void ggml_barrier(struct ggml_threadpool * tp) {
     int n_threads = atomic_load_explicit(&tp->n_threads_cur, memory_order_relaxed);
@@ -1258,6 +1311,10 @@ static void ggml_compute_forward_mul_mat(
         const struct ggml_compute_params * params,
               struct ggml_tensor * dst) {
 
+    // ⏱️ START TIMING: Total matrix multiplication
+    int64_t mul_mat_start_time = ggml_perf_time_us();
+    int64_t dequant_start_time = 0; // Initialize for scope
+    
     // 🔍 SIMPLE TEST: 함수 진입점 확인
     printf("🚀 ENTERED ggml_compute_forward_mul_mat\n");
     fflush(stdout);
@@ -1321,6 +1378,9 @@ static void ggml_compute_forward_mul_mat(
     }
 
     if (src1_cont) {
+        // ⏱️ START TIMING: GEMM operations
+        int64_t gemm_start_time = ggml_perf_time_us();
+        
         if (src0->type == GGML_TYPE_Q4_0) {
             printf("📝 Trying llamafile_sgemm with original src1 type...\n");
         }
@@ -1340,17 +1400,35 @@ static void ggml_compute_forward_mul_mat(
                     if (src0->type == GGML_TYPE_Q4_0) {
                         printf("❌ First llamafile_sgemm failed (expected for w4a16), falling back...\n");
                     }
+                    // ⏱️ RECORD GEMM TIME (partial)
+                    if (ith == 0) {
+                        ggml_perf_add_time(&g_perf_stats.gemm_time_us, gemm_start_time);
+                        g_perf_stats.gemm_ops++;
+                    }
                     goto UseGgmlGemm1;
                 }
+        
+        // ⏱️ RECORD SUCCESSFUL GEMM TIME
+        if (ith == 0) {
+            ggml_perf_add_time(&g_perf_stats.gemm_time_us, gemm_start_time);
+            g_perf_stats.gemm_ops++;
+            // ⏱️ RECORD TOTAL MUL_MAT TIME
+            ggml_perf_add_time(&g_perf_stats.other_time_us, mul_mat_start_time);
+        }
+        
         if (src0->type == GGML_TYPE_Q4_0) {
             printf("✅ First llamafile_sgemm succeeded (unexpected!)\n");
         }
+        
         return;
     }
 UseGgmlGemm1:;
 #endif
 
     if (src1->type != vec_dot_type) {
+        // ⏱️ START TIMING: Dequantization
+        dequant_start_time = ggml_perf_time_us();
+        
         char * wdata = params->wdata;
 
         const size_t nbw0 = ggml_type_size(vec_dot_type);
@@ -1435,9 +1513,19 @@ UseGgmlGemm1:;
     }
 
     ggml_barrier(params->threadpool);
+    
+    // ⏱️ RECORD DEQUANTIZATION TIME (after barrier)
+    if (src1->type != vec_dot_type && ith == 0) {
+        ggml_perf_add_time(&g_perf_stats.dequant_time_us, dequant_start_time);
+        g_perf_stats.dequant_ops++;
+        printf("⏱️ Dequantization completed: %.2f ms\n", (g_perf_stats.dequant_time_us / g_perf_stats.dequant_ops) / 1000.0);
+    }
 
 #if GGML_USE_LLAMAFILE
     if (src1->type != vec_dot_type) {
+        // ⏱️ START TIMING: GEMM with dequantized data
+        int64_t gemm_dequant_start_time = ggml_perf_time_us();
+        
         const void* wdata = (src1->type == vec_dot_type) ? src1->data : params->wdata;
         const size_t row_size = ggml_row_size(vec_dot_type, ne10);
 
@@ -1453,12 +1541,30 @@ UseGgmlGemm1:;
                                      nb1/ggml_type_size(dst->type),
                                      src0->type,
                                      vec_dot_type,
-                                     dst->type))
+                                     dst->type)) {
+                    // ⏱️ RECORD PARTIAL GEMM TIME
+                    if (ith == 0) {
+                        ggml_perf_add_time(&g_perf_stats.gemm_time_us, gemm_dequant_start_time);
+                        g_perf_stats.gemm_ops++;
+                    }
                     goto UseGgmlGemm2;
+                }
+        
+        // ⏱️ RECORD SUCCESSFUL GEMM TIME
+        if (ith == 0) {
+            ggml_perf_add_time(&g_perf_stats.gemm_time_us, gemm_dequant_start_time);
+            g_perf_stats.gemm_ops++;
+            // ⏱️ RECORD TOTAL MUL_MAT TIME
+            ggml_perf_add_time(&g_perf_stats.other_time_us, mul_mat_start_time);
+            printf("⏱️ GEMM with dequantized data completed: %.2f ms\n", (g_perf_stats.gemm_time_us / g_perf_stats.gemm_ops) / 1000.0);
+        }
         return;
     }
 UseGgmlGemm2:;
 #endif
+
+    // ⏱️ START TIMING: Final GEMM computation
+    int64_t final_gemm_start_time = ggml_perf_time_us();
 
     // This is the size of the first dimension of the result, so we can iterate that way. (see the ASSERT above, these are the same numbers)
     const int64_t nr0 = ne0;
@@ -3545,7 +3651,7 @@ void ggml_cpu_init(void) {
     if (is_first_call) {
         // initialize GELU, Quick GELU, SILU and EXP F32 tables
         {
-            const uint64_t t_start = ggml_time_us(); UNUSED(t_start);
+            const uint64_t t_start = ggml_perf_time_us(); UNUSED(t_start);
 
             for (int i = 0; i < (1 << 16); ++i) {
                 union {
@@ -3557,7 +3663,7 @@ void ggml_cpu_init(void) {
                 ggml_table_gelu_quick_f16[i] = GGML_FP32_TO_FP16(ggml_gelu_quick_f32(f));
             }
 
-            const uint64_t t_end = ggml_time_us(); UNUSED(t_end);
+            const uint64_t t_end = ggml_perf_time_us(); UNUSED(t_end);
 
             GGML_PRINT_DEBUG("%s: GELU, Quick GELU, SILU and EXP tables initialized in %f ms\n", __func__, (t_end - t_start)/1000.0);
 
@@ -3583,4 +3689,74 @@ void ggml_cpu_init(void) {
     }
 
     ggml_critical_section_end();
+}
+
+// Performance statistics functions
+void ggml_perf_print_stats(void) {
+    printf("\n📊 === GGML CPU PERFORMANCE BREAKDOWN ===\n");
+    
+    double total_time = g_perf_stats.dequant_time_us + g_perf_stats.gemm_time_us + 
+                       g_perf_stats.attention_time_us + g_perf_stats.norm_time_us + 
+                       g_perf_stats.activation_time_us + g_perf_stats.other_time_us;
+    
+    if (total_time == 0) {
+        printf("No performance data recorded.\n");
+        return;
+    }
+    
+    printf("🔢 Operation Counts:\n");
+    printf("  Dequantization ops: %lld\n", (long long)g_perf_stats.dequant_ops);
+    printf("  GEMM ops: %lld\n", (long long)g_perf_stats.gemm_ops);
+    printf("  Attention ops: %lld\n", (long long)g_perf_stats.attention_ops);
+    printf("  Normalization ops: %lld\n", (long long)g_perf_stats.norm_ops);
+    printf("  Activation ops: %lld\n", (long long)g_perf_stats.activation_ops);
+    
+    printf("\n⏱️ Time Breakdown:\n");
+    if (g_perf_stats.dequant_ops > 0) {
+        printf("  Dequantization: %.2f ms (%.1f%%) - %.3f ms per op\n", 
+               g_perf_stats.dequant_time_us / 1000.0, 
+               (g_perf_stats.dequant_time_us / total_time) * 100.0,
+               (g_perf_stats.dequant_time_us / g_perf_stats.dequant_ops) / 1000.0);
+    }
+    
+    if (g_perf_stats.gemm_ops > 0) {
+        printf("  Matrix Multiply (GEMM): %.2f ms (%.1f%%) - %.3f ms per op\n", 
+               g_perf_stats.gemm_time_us / 1000.0, 
+               (g_perf_stats.gemm_time_us / total_time) * 100.0,
+               (g_perf_stats.gemm_time_us / g_perf_stats.gemm_ops) / 1000.0);
+    }
+    
+    if (g_perf_stats.attention_ops > 0) {
+        printf("  Attention: %.2f ms (%.1f%%) - %.3f ms per op\n", 
+               g_perf_stats.attention_time_us / 1000.0, 
+               (g_perf_stats.attention_time_us / total_time) * 100.0,
+               (g_perf_stats.attention_time_us / g_perf_stats.attention_ops) / 1000.0);
+    }
+    
+    if (g_perf_stats.norm_ops > 0) {
+        printf("  Normalization: %.2f ms (%.1f%%) - %.3f ms per op\n", 
+               g_perf_stats.norm_time_us / 1000.0, 
+               (g_perf_stats.norm_time_us / total_time) * 100.0,
+               (g_perf_stats.norm_time_us / g_perf_stats.norm_ops) / 1000.0);
+    }
+    
+    if (g_perf_stats.activation_ops > 0) {
+        printf("  Activation Functions: %.2f ms (%.1f%%) - %.3f ms per op\n", 
+               g_perf_stats.activation_time_us / 1000.0, 
+               (g_perf_stats.activation_time_us / total_time) * 100.0,
+               (g_perf_stats.activation_time_us / g_perf_stats.activation_ops) / 1000.0);
+    }
+    
+    if (g_perf_stats.other_time_us > 0) {
+        printf("  Other Operations: %.2f ms (%.1f%%)\n", 
+               g_perf_stats.other_time_us / 1000.0, 
+               (g_perf_stats.other_time_us / total_time) * 100.0);
+    }
+    
+    printf("\n📈 Total Recorded Time: %.2f ms\n", total_time / 1000.0);
+    printf("=======================================\n");
+}
+
+void ggml_perf_reset_stats(void) {
+    memset(&g_perf_stats, 0, sizeof(g_perf_stats));
 }
