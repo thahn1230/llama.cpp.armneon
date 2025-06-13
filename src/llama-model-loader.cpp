@@ -35,6 +35,7 @@ static std::string llama_model_ftype_name(llama_ftype ftype) {
         case LLAMA_FTYPE_MOSTLY_Q5_0:     return "Q5_0";
         case LLAMA_FTYPE_MOSTLY_Q5_1:     return "Q5_1";
         case LLAMA_FTYPE_MOSTLY_Q8_0:     return "Q8_0";
+        case LLAMA_FTYPE_MOSTLY_Q8_A8:    return "Q8_A8";
         case LLAMA_FTYPE_MOSTLY_Q2_K:     return "Q2_K - Medium";
         case LLAMA_FTYPE_MOSTLY_Q2_K_S:   return "Q2_K - Small";
         case LLAMA_FTYPE_MOSTLY_Q3_K_S:   return "Q3_K - Small";
@@ -373,9 +374,9 @@ namespace GGUFMeta {
         return get_key(llm_kv(kid), result, required);
     }
 
-    template bool llama_model_loader::get_key<bool>       (enum llm_kv kid, bool & result,        bool required);
-    template bool llama_model_loader::get_key<float>      (enum llm_kv kid, float & result,       bool required);
-    template bool llama_model_loader::get_key<uint32_t>   (enum llm_kv kid, uint32_t & result,    bool required);
+    template bool llama_model_loader::get_key<bool>(enum llm_kv kid, bool & result,        bool required);
+    template bool llama_model_loader::get_key<float>(enum llm_kv kid, float & result,       bool required);
+    template bool llama_model_loader::get_key<uint32_t>(enum llm_kv kid, uint32_t & result,    bool required);
     template bool llama_model_loader::get_key<std::string>(enum llm_kv kid, std::string & result, bool required);
 
     template<>
@@ -618,6 +619,7 @@ llama_model_loader::llama_model_loader(
             case GGML_TYPE_Q5_0:    ftype = LLAMA_FTYPE_MOSTLY_Q5_0;    break;
             case GGML_TYPE_Q5_1:    ftype = LLAMA_FTYPE_MOSTLY_Q5_1;    break;
             case GGML_TYPE_Q8_0:    ftype = LLAMA_FTYPE_MOSTLY_Q8_0;    break;
+            case GGML_TYPE_Q8_A8:   ftype = LLAMA_FTYPE_MOSTLY_Q8_A8;   break;
             case GGML_TYPE_Q2_K:    ftype = LLAMA_FTYPE_MOSTLY_Q2_K;    break;
             case GGML_TYPE_Q3_K:    ftype = LLAMA_FTYPE_MOSTLY_Q3_K_M;  break;
             case GGML_TYPE_Q4_K:    ftype = LLAMA_FTYPE_MOSTLY_Q4_K_M;  break;
@@ -1136,3 +1138,12 @@ void llama_model_loader::print_info() const {
         LLAMA_LOG_INFO("%s: file size   = %.2f GiB (%.2f BPW) \n", __func__, n_bytes/1024.0/1024.0/1024.0, n_bytes*8.0/n_elements);
     }
 }
+
+// 명시적 템플릿 인스턴스화 - Q8_A8 지원을 위한 링킹 에러 해결
+template bool llama_model_loader::get_key<bool>(const std::string & key, bool & val, bool required);
+template bool llama_model_loader::get_key<float>(const std::string & key, float & val, bool required);
+template bool llama_model_loader::get_key<double>(const std::string & key, double & val, bool required);
+template bool llama_model_loader::get_key<std::string>(const std::string & key, std::string & val, bool required);
+template bool llama_model_loader::get_key<int32_t>(const std::string & key, int32_t & val, bool required);
+template bool llama_model_loader::get_key<uint64_t>(const std::string & key, uint64_t & val, bool required);
+template bool llama_model_loader::get_key<int64_t>(const std::string & key, int64_t & val, bool required);

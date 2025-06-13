@@ -226,6 +226,15 @@ typedef struct {
 } block_q8_1;
 static_assert(sizeof(block_q8_1) == 2*sizeof(ggml_half) + QK8_1, "wrong q8_1 block size/padding");
 
+// 8-bit weight, 8-bit activation quantization (SmoothQuant style)
+#define QK8_A8 32
+typedef struct {
+    ggml_half weight_scale;      // weight quantization scale  
+    int8_t weight_qs[QK8_A8];    // 8-bit quantized weights
+    // Note: activations are quantized at runtime, not stored in file
+} block_q8_a8;
+static_assert(sizeof(block_q8_a8) == sizeof(ggml_half) + QK8_A8, "wrong q8_a8 block size/padding");
+
 //
 // Ternary quantization
 //

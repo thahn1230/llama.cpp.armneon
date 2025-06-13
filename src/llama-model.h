@@ -357,6 +357,13 @@ struct llama_model {
     // gguf metadata
     std::unordered_map<std::string, std::string> gguf_kv;
 
+    // SmoothQuant configuration
+    struct {
+        bool enabled = false;
+        float alpha = 0.5f;
+        std::vector<float> layer_scaling_factors;
+    } smoothquant;
+
     // list of devices used in this model
     std::vector<ggml_backend_dev_t> devices;
 

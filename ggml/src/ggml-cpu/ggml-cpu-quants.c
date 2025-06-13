@@ -1408,6 +1408,91 @@ void quantize_row_q8_1(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, i
 #endif
 }
 
+// 8-bit weight, 8-bit activation quantization (SmoothQuant style)
+// reference implementation for deterministic creation of model files
+void quantize_row_q8_a8_ref(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
+    assert(QK8_A8 == 32);
+    assert(k % QK8_A8 == 0);
+    const int nb = k / QK8_A8;
+
+    block_q8_a8 * GGML_RESTRICT y = vy;
+
+    for (int i = 0; i < nb; i++) {
+        float amax = 0.0f; // absolute max
+
+        // Find max absolute value for quantization scale
+        for (int j = 0; j < QK8_A8; j++) {
+            const float v = x[i*QK8_A8 + j];
+            amax = MAX(amax, fabsf(v));
+        }
+
+        const float scale = amax / ((1 << 7) - 1);
+        const float iscale = scale ? 1.0f/scale : 0.0f;
+
+        // Store weight scale only (activations quantized at runtime)
+        y[i].weight_scale = GGML_FP32_TO_FP16(scale);
+
+        // Quantize weight values only
+        for (int j = 0; j < QK8_A8; ++j) {
+            const float x0 = x[i*QK8_A8 + j] * iscale;
+            y[i].weight_qs[j] = roundf(x0);
+        }
+    }
+}
+
+// NOTE: Runtime activation quantization was removed for compatibility
+// For Q8_A8, activations are quantized using the standard quantize_row_q8_a8 function
+// which handles both weights and activations consistently.
+
+void quantize_row_q8_a8(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
+    assert(QK8_A8 == 32);
+    assert(k % QK8_A8 == 0);
+    const int nb = k / QK8_A8;
+
+    block_q8_a8 * GGML_RESTRICT y = vy;
+
+#if defined(__ARM_NEON)
+    for (int i = 0; i < nb; i++) {
+        float32x4_t srcv [8];
+        float32x4_t asrcv[8];
+        float32x4_t amaxv[8];
+
+        // Load input values
+        for (int j = 0; j < 8; j++) srcv[j]  = vld1q_f32(x + i*32 + 4*j);
+        for (int j = 0; j < 8; j++) asrcv[j] = vabsq_f32(srcv[j]);
+
+        // Find max absolute value
+        for (int j = 0; j < 4; j++) amaxv[2*j] = vmaxq_f32(asrcv[2*j], asrcv[2*j+1]);
+        for (int j = 0; j < 2; j++) amaxv[4*j] = vmaxq_f32(amaxv[4*j], amaxv[4*j+2]);
+        for (int j = 0; j < 1; j++) amaxv[8*j] = vmaxq_f32(amaxv[8*j], amaxv[8*j+4]);
+
+        const float amax = vmaxvq_f32(amaxv[0]);
+
+        // Calculate scale for quantization
+        const float scale = amax / ((1 << 7) - 1);
+        const float iscale = scale ? 1.0f/scale : 0.0f;
+
+        // Store weight scale only (activations quantized at runtime)
+        y[i].weight_scale = GGML_FP32_TO_FP16(scale);
+
+        // Quantize weight values only
+        for (int j = 0; j < 8; j++) {
+            const float32x4_t v  = vmulq_n_f32(srcv[j], iscale);
+            const int32x4_t   vi = vcvtnq_s32_f32(v);
+
+            y[i].weight_qs[4*j + 0] = vgetq_lane_s32(vi, 0);
+            y[i].weight_qs[4*j + 1] = vgetq_lane_s32(vi, 1);
+            y[i].weight_qs[4*j + 2] = vgetq_lane_s32(vi, 2);
+            y[i].weight_qs[4*j + 3] = vgetq_lane_s32(vi, 3);
+        }
+    }
+#else
+    GGML_UNUSED(nb);
+    // scalar
+    quantize_row_q8_a8_ref(x, y, k);
+#endif
+}
+
 //
 // 2-6 bit quantization in super-blocks
 //
@@ -4006,6 +4091,146 @@ void ggml_vec_dot_q8_0_q8_0(int n, float * GGML_RESTRICT s, size_t bs, const voi
         }
 
         sumf += sumi*(GGML_FP16_TO_FP32(x[ib].d)*GGML_FP16_TO_FP32(y[ib].d));
+    }
+
+    *s = sumf;
+}
+
+// w8a8 quantization - 8-bit weight, 8-bit activation (SmoothQuant style)
+void ggml_vec_dot_q8_a8_q8_a8(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, size_t bx, const void * GGML_RESTRICT vy, size_t by, int nrc) {
+    const int qk = QK8_A8;
+    const int nb = n / qk;
+
+    assert(n % qk == 0);
+#if defined(__ARM_FEATURE_MATMUL_INT8)
+    assert((nrc == 2) || (nrc == 1));
+#else
+    assert(nrc == 1);
+#endif
+    UNUSED(nrc);
+    UNUSED(bx);
+    UNUSED(by);
+    UNUSED(bs);
+
+    const block_q8_a8 * GGML_RESTRICT x = vx;
+    const block_q8_a8 * GGML_RESTRICT y = vy;
+
+#if defined(__ARM_FEATURE_MATMUL_INT8)
+    if (nrc == 2) {
+        const block_q8_a8 * GGML_RESTRICT vx0 = vx;
+        const block_q8_a8 * GGML_RESTRICT vx1 = (const block_q8_a8 *) ((const uint8_t*)vx + bx);
+        const block_q8_a8 * GGML_RESTRICT vy0 = vy;
+        const block_q8_a8 * GGML_RESTRICT vy1 = (const block_q8_a8 *) ((const uint8_t*)vy + by);
+
+        float32x4_t sumv0 = vdupq_n_f32(0.0f);
+
+        for (int i = 0; i < nb; i++) {
+            const block_q8_a8 * GGML_RESTRICT b_x0 = &vx0[i];
+            const block_q8_a8 * GGML_RESTRICT b_y0 = &vy0[i];
+
+            const block_q8_a8 * GGML_RESTRICT b_x1 = &vx1[i];
+            const block_q8_a8 * GGML_RESTRICT b_y1 = &vy1[i];
+
+            // Load weight quantizations from x and activations from y
+            const int8x16_t x0_wl = vld1q_s8(b_x0->weight_qs);
+            const int8x16_t x0_wh = vld1q_s8(b_x0->weight_qs + 16);
+            const int8x16_t x1_wl = vld1q_s8(b_x1->weight_qs);
+            const int8x16_t x1_wh = vld1q_s8(b_x1->weight_qs + 16);
+
+            // Load activations from y (NOTE: for Q8_A8, y contains runtime-quantized activations)
+            const int8x16_t y0_al = vld1q_s8(b_y0->weight_qs);
+            const int8x16_t y0_ah = vld1q_s8(b_y0->weight_qs + 16);
+            const int8x16_t y1_al = vld1q_s8(b_y1->weight_qs);
+            const int8x16_t y1_ah = vld1q_s8(b_y1->weight_qs + 16);
+
+            // Calculate combined scales for W8A8 (y scale represents activation scale)
+            float32_t _scale[4] = {
+                GGML_FP16_TO_FP32(b_x0->weight_scale) * GGML_FP16_TO_FP32(b_y0->weight_scale),
+                GGML_FP16_TO_FP32(b_x0->weight_scale) * GGML_FP16_TO_FP32(b_y1->weight_scale),
+                GGML_FP16_TO_FP32(b_x1->weight_scale) * GGML_FP16_TO_FP32(b_y0->weight_scale),
+                GGML_FP16_TO_FP32(b_x1->weight_scale) * GGML_FP16_TO_FP32(b_y1->weight_scale)
+            };
+            float32x4_t scale = vld1q_f32(_scale);
+
+            // Interleave weight and activation data for ARM MATMUL_INT8
+            int8x16_t l0 = vreinterpretq_s8_s64(vzip1q_s64(vreinterpretq_s64_s8(x0_wl), vreinterpretq_s64_s8(x1_wl)));
+            int8x16_t l1 = vreinterpretq_s8_s64(vzip2q_s64(vreinterpretq_s64_s8(x0_wl), vreinterpretq_s64_s8(x1_wl)));
+
+            int8x16_t l2 = vreinterpretq_s8_s64(vzip1q_s64(vreinterpretq_s64_s8(x0_wh), vreinterpretq_s64_s8(x1_wh)));
+            int8x16_t l3 = vreinterpretq_s8_s64(vzip2q_s64(vreinterpretq_s64_s8(x0_wh), vreinterpretq_s64_s8(x1_wh)));
+
+            int8x16_t r0 = vreinterpretq_s8_s64(vzip1q_s64(vreinterpretq_s64_s8(y0_al), vreinterpretq_s64_s8(y1_al)));
+            int8x16_t r1 = vreinterpretq_s8_s64(vzip2q_s64(vreinterpretq_s64_s8(y0_al), vreinterpretq_s64_s8(y1_al)));
+
+            int8x16_t r2 = vreinterpretq_s8_s64(vzip1q_s64(vreinterpretq_s64_s8(y0_ah), vreinterpretq_s64_s8(y1_ah)));
+            int8x16_t r3 = vreinterpretq_s8_s64(vzip2q_s64(vreinterpretq_s64_s8(y0_ah), vreinterpretq_s64_s8(y1_ah)));
+
+            // ARM MATMUL_INT8: 8x8→32 bit matrix multiplication using vmmlaq_s32
+            sumv0 = vmlaq_f32(sumv0, (vcvtq_f32_s32(vmmlaq_s32((vmmlaq_s32((vmmlaq_s32((vmmlaq_s32(vdupq_n_s32(0), l0, r0)),
+                                                l1, r1)), l2, r2)), l3, r3))), scale);
+        }
+
+        float32x4_t sumv1 = vextq_f32(sumv0, sumv0, 2);
+        float32x4_t sumv2 = vzip1q_f32(sumv0, sumv1);
+
+        vst1_f32(s,      vget_low_f32 (sumv2));
+        vst1_f32(s + bs, vget_high_f32(sumv2));
+
+        return;
+    }
+#endif
+
+    // Fallback implementation for non-ARM MATMUL_INT8 or single row case
+    int ib = 0;
+    float sumf = 0;
+
+#if defined(__ARM_NEON)
+    float32x4_t sumv0 = vdupq_n_f32(0.0f);
+    float32x4_t sumv1 = vdupq_n_f32(0.0f);
+
+    for (; ib + 1 < nb; ib += 2) {
+        const block_q8_a8 * GGML_RESTRICT x0 = &x[ib + 0];
+        const block_q8_a8 * GGML_RESTRICT x1 = &x[ib + 1];
+        const block_q8_a8 * GGML_RESTRICT y0 = &y[ib + 0];
+        const block_q8_a8 * GGML_RESTRICT y1 = &y[ib + 1];
+
+        // Load weight and activation quantized values
+        const int8x16_t x0_wl = vld1q_s8(x0->weight_qs);
+        const int8x16_t x0_wh = vld1q_s8(x0->weight_qs + 16);
+        const int8x16_t x1_wl = vld1q_s8(x1->weight_qs);
+        const int8x16_t x1_wh = vld1q_s8(x1->weight_qs + 16);
+
+        const int8x16_t y0_al = vld1q_s8(y0->weight_qs);
+        const int8x16_t y0_ah = vld1q_s8(y0->weight_qs + 16);
+        const int8x16_t y1_al = vld1q_s8(y1->weight_qs);
+        const int8x16_t y1_ah = vld1q_s8(y1->weight_qs + 16);
+
+        // Use ARM NEON dot product instructions for W8A8: 8-bit weights × 8-bit activations
+        sumv0 = vmlaq_n_f32(sumv0, vcvtq_f32_s32(vaddq_s32(
+                        ggml_vdotq_s32(vdupq_n_s32(0), x0_wl, y0_al),
+                        ggml_vdotq_s32(vdupq_n_s32(0), x0_wh, y0_ah))), 
+                        GGML_FP16_TO_FP32(x0->weight_scale) * GGML_FP16_TO_FP32(y0->weight_scale));
+
+        sumv1 = vmlaq_n_f32(sumv1, vcvtq_f32_s32(vaddq_s32(
+                        ggml_vdotq_s32(vdupq_n_s32(0), x1_wl, y1_al),
+                        ggml_vdotq_s32(vdupq_n_s32(0), x1_wh, y1_ah))), 
+                        GGML_FP16_TO_FP32(x1->weight_scale) * GGML_FP16_TO_FP32(y1->weight_scale));
+    }
+
+    sumf = vaddvq_f32(sumv0) + vaddvq_f32(sumv1);
+#endif
+
+    // Scalar fallback for remaining elements
+    for (; ib < nb; ++ib) {
+        int sumi = 0;
+
+        // W8A8 dot product: 8-bit weights × 8-bit activations
+        for (int j = 0; j < qk; j++) {
+            sumi += (int32_t)x[ib].weight_qs[j] * (int32_t)y[ib].weight_qs[j];
+        }
+
+        // Scale by combined weight_scale × activation_scale (stored in y->weight_scale)
+        sumf += sumi * (GGML_FP16_TO_FP32(x[ib].weight_scale) * GGML_FP16_TO_FP32(y[ib].weight_scale));
     }
 
     *s = sumf;

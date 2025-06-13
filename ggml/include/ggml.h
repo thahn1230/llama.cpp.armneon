@@ -388,7 +388,8 @@ extern "C" {
         // GGML_TYPE_IQ4_NL_4_4 = 36,
         // GGML_TYPE_IQ4_NL_4_8 = 37,
         // GGML_TYPE_IQ4_NL_8_8 = 38,
-        GGML_TYPE_COUNT   = 39,
+        GGML_TYPE_Q8_A8   = 39,  // 8-bit weight, 8-bit activation quantization (SmoothQuant style)
+        GGML_TYPE_COUNT   = 40,
     };
 
     // precision
@@ -613,6 +614,12 @@ extern "C" {
     // If it returns true, the computation is aborted
     typedef bool (*ggml_abort_callback)(void * data);
 
+    // SmoothQuant tensor extra data
+    struct ggml_smoothquant_tensor_extra {
+        bool enabled;
+        int layer_index;
+        float scaling_factor;
+    };
 
     //
     // GUID

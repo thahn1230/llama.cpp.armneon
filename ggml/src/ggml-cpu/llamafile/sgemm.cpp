@@ -43,6 +43,16 @@
 // [1] J. Tunney, 'LLaMA Now Goes Faster on CPUs', Mar. 2024. [Online].
 //     Available: https://justine.lol/matmul/. [Accessed: 29-Mar-2024].
 
+#include <cstdint>  // For int64_t type
+
+// 🚀 ARM performance tracking declarations - must be at global scope
+extern "C" {
+    int64_t ggml_perf_time_us(void);
+    void ggml_perf_record_arm_dotprod(double time_us, int64_t ops);
+    void ggml_perf_record_arm_matmul_int8(double time_us, int64_t ops);
+    void ggml_perf_record_arm_neon(double time_us, int64_t ops);
+}
+
 #if defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wignored-attributes"
@@ -52,10 +62,12 @@
 #include "ggml-impl.h"
 #include "ggml-cpu-impl.h"
 #include "ggml-quants.h"
+#include "ggml-cpu.h"
 
 #include <atomic>
 #include <array>
 #include <type_traits>
+#include <string>
 
 #ifdef _MSC_VER
 #define NOINLINE __declspec(noinline)
@@ -3493,13 +3505,27 @@ bool llamafile_sgemm(const struct ggml_compute_params * params, int64_t m, int64
         return true;
 #elif defined(__ARM_FEATURE_DOTPROD)
         printf("🚀 Using ARM NEON dotprod w4a8 kernel\n");
+        
+        // 🚀 Start ARM operation timing
+        int64_t arm_start_time = ggml_perf_time_us();
+        
         tinyBLAS_Q0_ARM<block_q4_0> tb{
             k, (const block_q4_0 *)A, lda,
             (const block_q8_0 *)B, ldb,
             (float *)C, ldc,
             params->ith, params->nth};
         tb.matmul(m, n);
-        printf("✅ ARM w4a8 GEMM completed\n");
+        
+        // 🚀 Record ARM DOTPROD operation
+        int64_t arm_end_time = ggml_perf_time_us();
+        double arm_time_us = (double)(arm_end_time - arm_start_time);
+        int64_t total_ops = (int64_t)m * n * k / 32; // Approximate operation count
+        
+        // Declare the ARM performance tracking function
+        extern void ggml_perf_record_arm_dotprod(double time_us, int64_t ops);
+        ggml_perf_record_arm_dotprod(arm_time_us, total_ops);
+        
+        printf("✅ ARM w4a8 GEMM completed (%.2f ms, %ld ops)\n", arm_time_us / 1000.0, total_ops);
         return true;
 #elif defined(__MMA__)
         printf("🚀 Using PowerPC MMA w4a8 kernel\n");

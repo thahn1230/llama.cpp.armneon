@@ -434,6 +434,29 @@ void llama_model::load_hparams(llama_model_loader & ml) {
     // get general kv
     ml.get_key(LLM_KV_GENERAL_NAME, name, false);
 
+    // Load SmoothQuant configuration
+    ml.get_key("smoothquant.enabled", smoothquant.enabled, false);
+    if (smoothquant.enabled) {
+        ml.get_key("smoothquant.alpha", smoothquant.alpha, false);
+        
+        // Try to load scaling factors array
+        const int key_id = gguf_find_key(ml.meta.get(), "smoothquant.scaling_factors");
+        if (key_id >= 0 && gguf_get_kv_type(ml.meta.get(), key_id) == GGUF_TYPE_ARRAY) {
+            size_t n_scales = gguf_get_arr_n(ml.meta.get(), key_id);
+            const float* scales_data = (const float*)gguf_get_arr_data(ml.meta.get(), key_id);
+            
+            smoothquant.layer_scaling_factors.resize(n_scales);
+            std::copy(scales_data, scales_data + n_scales, smoothquant.layer_scaling_factors.begin());
+            
+            LLAMA_LOG_INFO("%s: loaded SmoothQuant config: enabled=%s, alpha=%.3f, %zu scaling factors\n", 
+                          __func__, smoothquant.enabled ? "true" : "false", 
+                          smoothquant.alpha, n_scales);
+        } else {
+            LLAMA_LOG_WARN("%s: SmoothQuant enabled but no scaling factors found in metadata\n", __func__);
+            smoothquant.enabled = false;
+        }
+    }
+
     // everything past this point is not vocab-related
     if (hparams.vocab_only) {
         return;

@@ -21,7 +21,7 @@ ANDROID_ABI:UNINITIALIZED=arm64-v8a
 ANDROID_PLATFORM:UNINITIALIZED=android-28
 
 //ggml: build shared libraries
-BUILD_SHARED_LIBS:BOOL=OFF
+BUILD_SHARED_LIBS:BOOL=ON
 
 //Build the testing tree.
 BUILD_TESTING:BOOL=ON
@@ -41,8 +41,12 @@ CMAKE_ASM_FLAGS_DEBUG:STRING=
 //Flags used by the compiler during release builds.
 CMAKE_ASM_FLAGS_RELEASE:STRING=
 
-//Build type
+//Choose the type of build, options are: None Debug Release RelWithDebInfo
+// MinSizeRel ...
 CMAKE_BUILD_TYPE:STRING=Release
+
+//Enable/Disable color output during build.
+CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //LLVM archiver
 CMAKE_CXX_COMPILER_AR:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar
@@ -51,7 +55,7 @@ CMAKE_CXX_COMPILER_AR:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/too
 CMAKE_CXX_COMPILER_RANLIB:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
 
 //Flags used by the compiler during all build types.
-CMAKE_CXX_FLAGS:STRING=
+CMAKE_CXX_FLAGS:STRING=-march=armv8-a+dotprod+i8mm+fp16
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -75,7 +79,7 @@ CMAKE_C_COMPILER_AR:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolc
 CMAKE_C_COMPILER_RANLIB:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib
 
 //Flags used by the compiler during all build types.
-CMAKE_C_FLAGS:STRING=
+CMAKE_C_FLAGS:STRING=-march=armv8-a+dotprod+i8mm+fp16
 
 //Flags used by the compiler during debug builds.
 CMAKE_C_FLAGS_DEBUG:STRING=
@@ -167,8 +171,8 @@ CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 //Path to a program.
 CMAKE_LINKER:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld
 
-//Program used to build from build.ninja files.
-CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/ninja
+//Path to a program.
+CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/gmake
 
 //Flags used by the linker during the creation of modules.
 CMAKE_MODULE_LINKER_FLAGS:STRING=
@@ -284,18 +288,6 @@ CTEST_SUBMIT_RETRY_COUNT:STRING=3
 //How long to wait between timed-out CTest submissions.
 CTEST_SUBMIT_RETRY_DELAY:STRING=5
 
-//The directory containing a CMake configuration file for CURL.
-CURL_DIR:PATH=CURL_DIR-NOTFOUND
-
-//Path to a file.
-CURL_INCLUDE_DIR:PATH=CURL_INCLUDE_DIR-NOTFOUND
-
-//Path to a library.
-CURL_LIBRARY_DEBUG:FILEPATH=CURL_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-CURL_LIBRARY_RELEASE:FILEPATH=CURL_LIBRARY_RELEASE-NOTFOUND
-
 //Maximum time allowed before CTest will kill the test.
 DART_TESTING_TIMEOUT:STRING=1500
 
@@ -372,7 +364,7 @@ GGML_CPU_AARCH64:BOOL=ON
 GGML_CPU_ALL_VARIANTS:BOOL=OFF
 
 //ggml: CPU architecture for ARM
-GGML_CPU_ARM_ARCH:STRING=
+GGML_CPU_ARM_ARCH:STRING=armv8-a+dotprod+i8mm+fp16
 
 //ggml: use memkind for CPU HBM
 GGML_CPU_HBM:BOOL=OFF
@@ -649,7 +641,7 @@ LLAMA_USE_SYSTEM_GGML:BOOL=OFF
 MAKECOMMAND:STRING=/usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 
 //Path to a library.
-MATH_LIBRARY:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/28/libm.so
+MATH_LIBRARY:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/libm.so
 
 //Path to the memory checking command, used for memory error detection.
 MEMORYCHECK_COMMAND:FILEPATH=/usr/local/cuda-12.4/bin/compute-sanitizer
@@ -678,12 +670,6 @@ OpenMP_C_LIB_NAMES:STRING=omp
 //Path to the omp library for OpenMP
 OpenMP_omp_LIBRARY:FILEPATH=/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/17/lib/linux/aarch64/libomp.so
 
-//Arguments to supply to pkg-config
-PKG_CONFIG_ARGN:STRING=
-
-//pkg-config executable
-PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
-
 //Name of the computer/site where compile is being run
 SITE:STRING=eslab18
 
@@ -705,9 +691,6 @@ llama.cpp_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 llama.cpp_SOURCE_DIR:STATIC=/home/thahn1230/llama.cpp
 
-//Path to a library.
-pkgcfg_lib_PC_CURL_curl:FILEPATH=pkgcfg_lib_PC_CURL_curl-NOTFOUND
-
 
 ########################
 # INTERNAL cache entries
@@ -717,8 +700,6 @@ pkgcfg_lib_PC_CURL_curl:FILEPATH=pkgcfg_lib_PC_CURL_curl-NOTFOUND
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
-//STRINGS property for variable: CMAKE_BUILD_TYPE
-CMAKE_BUILD_TYPE-STRINGS:INTERNAL=Debug;Release;MinSizeRel;RelWithDebInfo
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=/home/thahn1230/llama.cpp/build-android
 //Major version of cmake used to create the current loaded cache
@@ -727,6 +708,8 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=22
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=1
+//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
+CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=/usr/bin/cmake
 //Path to cpack program executable.
@@ -786,7 +769,7 @@ CMAKE_EXPORT_COMPILE_COMMANDS-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=Ninja
+CMAKE_GENERATOR:INTERNAL=Unix Makefiles
 //Generator instance identifier.
 CMAKE_GENERATOR_INSTANCE:INTERNAL=
 //Name of generator platform.
@@ -902,14 +885,6 @@ COVERAGE_EXTRA_FLAGS-ADVANCED:INTERNAL=1
 CTEST_SUBMIT_RETRY_COUNT-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CTEST_SUBMIT_RETRY_DELAY
 CTEST_SUBMIT_RETRY_DELAY-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_DIR
-CURL_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_INCLUDE_DIR
-CURL_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_LIBRARY_DEBUG
-CURL_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CURL_LIBRARY_RELEASE
-CURL_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: DART_TESTING_TIMEOUT
 DART_TESTING_TIMEOUT-ADVANCED:INTERNAL=1
 //Details about finding Git
@@ -923,7 +898,7 @@ FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_C:INTERNAL=[-fopenmp=libomp][/home/thahn1230
 //Details about finding OpenMP_CXX
 FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_CXX:INTERNAL=[-fopenmp=libomp][/home/thahn1230/android-sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/17/lib/linux/aarch64/libomp.so][v5.0()]
 //Details about finding Python3
-FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/home/thahn1230/anaconda3/envs/awq/bin/python3.10][cfound components: Interpreter ][v3.10.16()]
+FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/bin/python3.10][cfound components: Interpreter ][v3.10.6()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //List of backends for cmake package
@@ -970,45 +945,6 @@ OpenMP_SPECTEST_CXX_:INTERNAL=TRUE
 OpenMP_SPECTEST_C_:INTERNAL=TRUE
 //ADVANCED property for variable: OpenMP_omp_LIBRARY
 OpenMP_omp_LIBRARY-ADVANCED:INTERNAL=1
-PC_CURL_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
-PC_CURL_CFLAGS_I:INTERNAL=
-PC_CURL_CFLAGS_OTHER:INTERNAL=
-PC_CURL_FOUND:INTERNAL=1
-PC_CURL_INCLUDEDIR:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_CURL_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_CURL_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lcurl
-PC_CURL_LDFLAGS_OTHER:INTERNAL=
-PC_CURL_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
-PC_CURL_LIBRARIES:INTERNAL=curl
-PC_CURL_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
-PC_CURL_LIBS:INTERNAL=
-PC_CURL_LIBS_L:INTERNAL=
-PC_CURL_LIBS_OTHER:INTERNAL=
-PC_CURL_LIBS_PATHS:INTERNAL=
-PC_CURL_MODULE_NAME:INTERNAL=libcurl
-PC_CURL_PREFIX:INTERNAL=/usr
-PC_CURL_STATIC_CFLAGS:INTERNAL=-I/usr/include/x86_64-linux-gnu
-PC_CURL_STATIC_CFLAGS_I:INTERNAL=
-PC_CURL_STATIC_CFLAGS_OTHER:INTERNAL=
-PC_CURL_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/x86_64-linux-gnu
-PC_CURL_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-L/usr/lib/x86_64-linux-gnu/mit-krb5;-lcurl;-lnghttp2;-lidn2;-lrtmp;-lssh;-lpsl;-lssl;-lcrypto;-lssl;-lcrypto;-lgssapi_krb5;-llber;-lldap;-llber;-lzstd;-lbrotlidec;-lz
-PC_CURL_STATIC_LDFLAGS_OTHER:INTERNAL=
-PC_CURL_STATIC_LIBDIR:INTERNAL=
-PC_CURL_STATIC_LIBRARIES:INTERNAL=curl;nghttp2;idn2;rtmp;ssh;psl;ssl;crypto;ssl;crypto;gssapi_krb5;lber;ldap;lber;zstd;brotlidec;z
-PC_CURL_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu;/usr/lib/x86_64-linux-gnu/mit-krb5
-PC_CURL_STATIC_LIBS:INTERNAL=
-PC_CURL_STATIC_LIBS_L:INTERNAL=
-PC_CURL_STATIC_LIBS_OTHER:INTERNAL=
-PC_CURL_STATIC_LIBS_PATHS:INTERNAL=
-PC_CURL_VERSION:INTERNAL=7.81.0
-PC_CURL_libcurl_INCLUDEDIR:INTERNAL=
-PC_CURL_libcurl_LIBDIR:INTERNAL=
-PC_CURL_libcurl_PREFIX:INTERNAL=
-PC_CURL_libcurl_VERSION:INTERNAL=
-//ADVANCED property for variable: PKG_CONFIG_ARGN
-PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
-PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: SITE
 SITE-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
@@ -1016,13 +952,8 @@ THREADS_HAVE_PTHREAD_ARG:INTERNAL=TRUE
 //CMAKE_INSTALL_PREFIX during last run
 _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/usr/local
 //Path to a program.
-_Python3_EXECUTABLE:INTERNAL=/home/thahn1230/anaconda3/envs/awq/bin/python3.10
+_Python3_EXECUTABLE:INTERNAL=/usr/bin/python3.10
 //Python3 Properties
-_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;10;16;64;;;/home/thahn1230/anaconda3/envs/awq/lib/python3.10;/home/thahn1230/anaconda3/envs/awq/lib/python3.10;/home/thahn1230/anaconda3/envs/awq/lib/python3.10/site-packages;/home/thahn1230/anaconda3/envs/awq/lib/python3.10/site-packages
-_Python3_INTERPRETER_SIGNATURE:INTERNAL=6edcb5b3c04bef5d83b964c82eef3e65
-__pkg_config_arguments_PC_CURL:INTERNAL=QUIET;libcurl
-__pkg_config_checked_PC_CURL:INTERNAL=1
-//ADVANCED property for variable: pkgcfg_lib_PC_CURL_curl
-pkgcfg_lib_PC_CURL_curl-ADVANCED:INTERNAL=1
-prefix_result:INTERNAL=AsynchDNS;GSS-API;HSTS;HTTP2;HTTPS-proxy;IDN;IPv6;Kerberos;Largefile;NTLM;NTLM_WB;PSL;SPNEGO;SSL;TLS-SRP;UnixSockets;alt-svc;brotli;libz;zstd
+_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;10;6;64;;;/usr/lib/python3.10;/usr/lib/python3.10;/usr/lib/python3/dist-packages;/usr/lib/python3/dist-packages
+_Python3_INTERPRETER_SIGNATURE:INTERNAL=b91b4035ecb3bb3f5760d35922531bcd
 

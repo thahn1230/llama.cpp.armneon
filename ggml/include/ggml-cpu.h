@@ -143,7 +143,21 @@ extern "C" {
     //
 
     GGML_BACKEND_API void ggml_perf_print_stats(void);
+    GGML_BACKEND_API void ggml_perf_print_stats_with_llama_time(double llama_cpp_total_time_ms);
     GGML_BACKEND_API void ggml_perf_reset_stats(void);
+
+    // 🔧 Extended performance tracking functions
+    GGML_BACKEND_API void ggml_perf_record_backend_init(double time_us);
+    GGML_BACKEND_API void ggml_perf_record_kv_cache(double time_us);
+    GGML_BACKEND_API void ggml_perf_record_token_processing(double time_us);
+    GGML_BACKEND_API void ggml_perf_record_graph_build(double time_us);
+    GGML_BACKEND_API void ggml_perf_record_tensor_copy(double time_us, int64_t bytes);
+    GGML_BACKEND_API void ggml_perf_record_io(double time_us);
+    GGML_BACKEND_API void ggml_perf_record_scheduling(double time_us);
+    GGML_BACKEND_API void ggml_perf_record_other_overhead(double time_us);
+
+    // Get current time in microseconds for external measurements
+    GGML_BACKEND_API int64_t ggml_perf_time_us_cpu(void);
 
 #ifdef __cplusplus
 }

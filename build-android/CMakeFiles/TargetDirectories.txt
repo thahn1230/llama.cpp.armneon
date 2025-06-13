@@ -395,6 +395,7 @@
 /home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/mtmd_audio.dir
 /home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/mtmd.dir
 /home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/mtmd_static.dir
+/home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/mtmd_shared.dir
 /home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/llama-llava-cli.dir
 /home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/llama-gemma3-cli.dir
 /home/thahn1230/llama.cpp/build-android/tools/mtmd/CMakeFiles/llama-minicpmv-cli.dir

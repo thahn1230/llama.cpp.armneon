@@ -2589,6 +2589,9 @@ int32_t llama_encode(
 int32_t llama_decode(
         llama_context * ctx,
           llama_batch   batch) {
+    // 🔧 START: Track llama_decode total time
+    int64_t decode_start_time = ggml_perf_time_us_cpu();
+    
     int ret = ctx->decode(batch);
 
     // defrag and try again
@@ -2607,6 +2610,13 @@ int32_t llama_decode(
     if (ret != 0) {
         LLAMA_LOG_ERROR("%s: failed to decode, ret = %d\n", __func__, ret);
     }
+
+    // 🔧 END: Record llama_decode time
+    int64_t decode_time_us = ggml_perf_time_us_cpu() - decode_start_time;
+    double decode_time_ms = decode_time_us / 1000.0;
+    
+    // Record in GGML performance stats - add llama.cpp layer overhead
+    ggml_perf_record_other_overhead(decode_time_ms);
 
     return ret;
 }
@@ -2638,6 +2648,10 @@ void llama_perf_context_print(const llama_context * ctx) {
     LLAMA_LOG_INFO("%s:        eval time = %10.2f ms / %5d runs   (%8.2f ms per token, %8.2f tokens per second)\n",
             __func__, data.t_eval_ms, data.n_eval, data.t_eval_ms / data.n_eval, 1e3 / data.t_eval_ms * data.n_eval);
     LLAMA_LOG_INFO("%s:       total time = %10.2f ms / %5d tokens\n", __func__, (t_end_ms - data.t_start_ms), (data.n_p_eval + data.n_eval));
+    
+    // 🔧 Print detailed GGML CPU performance breakdown
+    LLAMA_LOG_INFO("\n=== DETAILED PERFORMANCE BREAKDOWN ===\n");
+    ggml_perf_print_stats();
 }
 
 void llama_perf_context_reset(llama_context * ctx) {

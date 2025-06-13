@@ -4445,6 +4445,10 @@ void ggml_compute_forward_get_rows(
             {
                 ggml_compute_forward_get_rows_f32(params, dst);
             } break;
+        case GGML_TYPE_Q8_A8:
+            {
+                ggml_compute_forward_get_rows_q(params, dst);
+            } break;
         default:
             {
                 GGML_ABORT("fatal error");

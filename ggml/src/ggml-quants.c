@@ -356,6 +356,22 @@ void dequantize_row_q8_0(const block_q8_0 * GGML_RESTRICT x, float * GGML_RESTRI
     }
 }
 
+void dequantize_row_q8_a8(const block_q8_a8 * GGML_RESTRICT x, float * GGML_RESTRICT y, int64_t k) {
+    static const int qk = QK8_A8;
+
+    assert(k % qk == 0);
+
+    const int nb = k / qk;
+
+    for (int i = 0; i < nb; i++) {
+        const float d = GGML_FP16_TO_FP32(x[i].weight_scale);
+
+        for (int j = 0; j < qk; ++j) {
+            y[i*qk + j] = x[i].weight_qs[j]*d;
+        }
+    }
+}
+
 //
 // 2-6 bit quantization in super-blocks
 //
@@ -5131,6 +5147,15 @@ bool ggml_validate_row_data(enum ggml_type type, const void * data, size_t nbyte
         case GGML_TYPE_Q8_0:
             {
                 VALIDATE_ROW_DATA_D_F16_IMPL(block_q8_0, data, nb);
+            } break;
+        case GGML_TYPE_Q8_A8:
+            {
+                const block_q8_a8 * q = (const block_q8_a8 *) data;
+                for (size_t i = 0; i < nb; ++i) {
+                    if (!validate_fp16(q[i].weight_scale, i)) {
+                        return false;
+                    }
+                }
             } break;
         case GGML_TYPE_Q2_K:
             {

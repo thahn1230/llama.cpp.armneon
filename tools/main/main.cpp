@@ -32,6 +32,9 @@
 #pragma warning(disable: 4244 4267) // possible loss of data
 #endif
 
+// 🔧 GLOBAL: Total execution time tracking
+static int64_t g_llama_cpp_start_time = 0;
+
 static llama_context           ** g_ctx;
 static llama_model             ** g_model;
 static common_sampler          ** g_smpl;
@@ -85,6 +88,9 @@ static void sigint_handler(int signo) {
 #endif
 
 int main(int argc, char ** argv) {
+    // 🔧 START: Total llama.cpp execution time measurement
+    g_llama_cpp_start_time = ggml_perf_time_us_cpu();
+    
     common_params params;
     g_params = &params;
     if (!common_params_parse(argc, argv, params, LLAMA_EXAMPLE_MAIN, print_usage)) {
@@ -967,8 +973,21 @@ int main(int argc, char ** argv) {
     LOG("\n\n");
     common_perf_print(ctx, smpl);
 
-    // Print detailed CPU performance breakdown
-    ggml_perf_print_stats();
+    // 🔧 END: Calculate total llama.cpp execution time  
+    int64_t total_llama_cpp_time_us = ggml_perf_time_us_cpu() - g_llama_cpp_start_time;
+    double total_llama_cpp_time_ms = total_llama_cpp_time_us / 1000.0;
+    
+    printf("\n");
+    printf("========================================\n");
+    printf("=== LLAMA.CPP vs GGML TIME COMPARISON ===\n");
+    printf("========================================\n");
+    printf("Total llama.cpp execution time: %.2f ms\n", total_llama_cpp_time_ms);
+    printf("For detailed GGML breakdown, see below:\n");
+    printf("========================================\n");
+    fflush(stdout);
+
+    // Print detailed CPU performance breakdown with comparison
+    ggml_perf_print_stats_with_llama_time(total_llama_cpp_time_ms);
 
     common_sampler_free(smpl);
 

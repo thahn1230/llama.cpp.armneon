@@ -1,0 +1,1 @@
+The quick brown fox jumps over the lazy dog. This is a test sentence for measuring perplexity in our real SmoothQuant implementation with layer-specific scaling factors. Each layer now uses different scaling factors: 0.871, 0.721, 0.647, 0.777, 0.549, 0.545, 0.667, 0.614 for early layers, and so on.
